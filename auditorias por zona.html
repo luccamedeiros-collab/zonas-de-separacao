@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoria Rotativa - Zona de Separação - Grupo Krona</title>
+<style>
+    :root {
+        --krona-blue: #003865;
+        --krona-blue-light: #005691;
+        --krona-blue-hover: #002244;
+        --bg-color: #f0f4f8;
+        --card-bg: #ffffff;
+        --text-color: #1e293b;
+        --border-color: #cbd5e1;
+        --danger-color: #dc2626;
+        --success-color: #16a34a;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 850px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 56, 101, 0.12);
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .header {
+        background-color: var(--krona-blue);
+        color: #ffffff;
+        padding: 32px 24px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 4px solid var(--krona-blue-light);
+    }
+
+    .header h1 {
+        font-size: 1.7rem;
+        margin-bottom: 8px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .header p {
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+
+    form {
+        padding: 28px 32px;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        color: #ffffff;
+        background-color: var(--krona-blue);
+        padding: 10px 18px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        margin-top: 30px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-left: 5px solid var(--krona-blue-light);
+    }
+
+    .section-title:first-of-type {
+        margin-top: 0;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 16px;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+        color: var(--krona-blue);
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin-top: 4px;
+    }
+
+    .radio-group label {
+        font-weight: 500;
+        color: var(--text-color);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 0.95rem;
+        background-color: #fff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--krona-blue-light);
+        box-shadow: 0 0 0 3px rgba(0, 86, 145, 0.2);
+    }
+
+    #secaoMotivoDivergencia {
+        display: none;
+        background: #fff5f5;
+        padding: 18px;
+        border-radius: 8px;
+        border: 1px solid #fca5a5;
+        margin-top: 16px;
+    }
+
+    .btn-add {
+        background-color: var(--krona-blue-light);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+    .btn-remove {
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.85rem;
+    }
+
+    .itens-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+    }
+
+    .itens-table th {
+        background: #e2e8f0;
+        color: var(--krona-blue);
+        text-align: left;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .itens-table td {
+        padding: 6px;
+        border: 1px solid var(--border-color);
+    }
+
+    .itens-table td:last-child {
+        text-align: center;
+        width: 60px;
+    }
+
+    .itens-table input, .itens-table select {
+        border: 1px solid transparent;
+        background: transparent;
+        padding: 6px 8px;
+    }
+
+    .itens-table input:focus, .itens-table select:focus {
+        background: #fff;
+        border-color: var(--krona-blue-light);
+        box-shadow: none;
+    }
+
+    .itens-table tr.row-nao { background: #fef2f2; }
+    .itens-table tr.row-sim { background: #f0fdf4; }
+
+    .item-divergencia-row td {
+        background: #fff5f5;
+        padding: 10px;
+        border-top: none;
+    }
+
+    .item-divergencia-row .item-divergencia-fields {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .item-divergencia-fields > div {
+        flex: 1;
+        min-width: 160px;
+    }
+
+    .item-divergencia-fields label {
+        font-size: 0.78rem;
+        margin-bottom: 3px;
+    }
+
+    .item-divergencia-fields input,
+    .item-divergencia-fields select {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        padding: 6px 8px;
+    }
+
+    .btn-submit {
+        background-color: var(--krona-blue);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 30px;
+        transition: background-color 0.2s;
+        box-shadow: 0 3px 8px rgba(0, 56, 101, 0.2);
+    }
+
+    .btn-submit:hover {
+        background-color: var(--krona-blue-light);
+    }
+
+    .status-message {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: 600;
+        display: none;
+    }
+
+    .status-message.error {
+        background-color: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+        display: block;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 80px;
+        font-family: inherit;
+    }
+
+    .upload-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        background-color: #f8fafc;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        margin-top: 6px;
+    }
+
+    .upload-area:hover {
+        border-color: var(--krona-blue-light);
+        background-color: #eff6ff;
+    }
+
+    .upload-icon {
+        color: var(--krona-blue);
+        margin-bottom: 8px;
+    }
+
+    .upload-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--krona-blue);
+    }
+
+    .upload-subtitle {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .photo-card {
+        position: relative;
+        width: 100%;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        background: #fff;
+    }
+
+    .photo-card .photo-img-wrap {
+        position: relative;
+        width: 100%;
+        height: 100px;
+    }
+
+    .photo-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .photo-card .caption-input {
+        width: 100%;
+        border: none;
+        border-top: 1px solid var(--border-color);
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        background: #f8fafc;
+    }
+
+    .photo-card .caption-input:focus {
+        outline: none;
+        background: #eff6ff;
+        box-shadow: none;
+    }
+
+    .photo-card .remove-btn-photo {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: rgba(220, 38, 38, 0.85);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .photo-card .remove-btn-photo:hover {
+        background: var(--danger-color);
+    }
+
+    .bloco-auditoria {
+        border: 2px solid var(--krona-blue-light);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 24px;
+        background: #fbfdff;
+    }
+
+    .bloco-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .bloco-header strong {
+        color: var(--krona-blue);
+        font-size: 1.05rem;
+    }
+
+    .btn-remove-bloco {
+        background: #ffffff;
+        color: var(--danger-color);
+        border: 1px solid #fecaca;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-remove-bloco:hover {
+        background: #fee2e2;
+    }
+
+    .btn-iniciar-adicionar {
+        background-color: var(--krona-blue-light);
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .btn-finalizar-auditorias {
+        background-color: var(--success-color);
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Auditoria Rotativa - Zona de Separação</h1>
+        <p>Registro rápido de auditoria de zona de separação</p>
+    </div>
+
+    <form id="auditForm" onsubmit="return false;">
+        <div class="section-title">Informações Gerais</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="data">Data *</label>
+                <input type="date" id="data" required>
+            </div>
+            <div class="form-group">
+                <label for="unidade">Unidade *</label>
+                <select id="unidade" required>
+                    <option value="">Selecione...</option>
+                    <option value="Matriz">Matriz</option>
+                    <option value="Nordeste">Nordeste</option>
+                    <option value="Centro-Oeste">Centro-Oeste</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="turno">Turno *</label>
+                <select id="turno" required>
+                    <option value="">Selecione...</option>
+                    <option value="Turno 11">Turno 11</option>
+                    <option value="Turno 21">Turno 21</option>
+                    <option value="Turno 31">Turno 31</option>
+                    <option value="Turno 16">Turno 16</option>
+                    <option value="Turno 26">Turno 26</option>
+                    <option value="Turno 36">Turno 36</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="responsavel">Responsável *</label>
+                <input type="text" id="responsavel" required placeholder="Nome do responsável">
+            </div>
+        </div>
+
+        <div id="blocosContainer"></div>
+
+        <button type="button" class="btn-iniciar-adicionar" id="btnCriarPlano" onclick="criarPlanoAuditoria()">▶ Criar Plano de Auditoria</button>
+
+        <div id="finalizarWrapper" style="display:none;">
+            <button type="button" class="btn-finalizar-auditorias" id="btnFinalizar" onclick="finalizarAuditorias()">✔ Finalizar Auditorias e Gerar Relatório</button>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+    </form>
+</div>
+
+<script>
+    // ===== Estado geral =====
+    let blocoCounter = 0;
+    const blocosState = {}; // { [blocoId]: { itemIdCounter, itens: {}, fotos: [], fotoIdCounter } }
+
+    // ===== Fotos (compressão) =====
+    const MAX_FOTOS = 15;
+    const FOTO_MAX_DIMENSAO = 1600;
+    const FOTO_QUALIDADE_JPEG = 0.72;
+
+    function comprimirImagem(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height && width > FOTO_MAX_DIMENSAO) {
+                        height = Math.round(height * (FOTO_MAX_DIMENSAO / width));
+                        width = FOTO_MAX_DIMENSAO;
+                    } else if (height >= width && height > FOTO_MAX_DIMENSAO) {
+                        width = Math.round(width * (FOTO_MAX_DIMENSAO / height));
+                        height = FOTO_MAX_DIMENSAO;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', FOTO_QUALIDADE_JPEG));
+                };
+                img.onerror = () => reject(new Error('Não foi possível carregar a imagem.'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('Não foi possível ler o arquivo.'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function formatarDataBR(isoDate) {
+        if (!isoDate) return '-';
+        const [ano, mes, dia] = isoDate.split('-');
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    // ===== Template de um bloco (uma auditoria = um identificador) =====
+
+    function templateBloco(blocoId) {
+        return `
+            <div class="bloco-auditoria" id="bloco-${blocoId}" data-bloco-id="${blocoId}">
+                <div class="bloco-header">
+                    <strong class="bloco-numero">Plano de Auditoria</strong>
+                    <button type="button" class="btn-remove-bloco" onclick="removerBloco(${blocoId})">🗑 Remover</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="identificador_${blocoId}">Identificador *</label>
+                    <input type="text" id="identificador_${blocoId}" required placeholder="ID do aramado/pallet auditado">
+                </div>
+
+                <div class="form-group">
+                    <label>Aramado/pallet conforme? *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="aramadoConforme_${blocoId}" value="Sim" required> Sim</label>
+                        <label><input type="radio" name="aramadoConforme_${blocoId}" value="Não" required> Não</label>
+                    </div>
+                </div>
+
+                <div id="secaoMotivoDivergencia_${blocoId}" style="display:none;">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="motivo_${blocoId}">Motivo *</label>
+                            <select id="motivo_${blocoId}">
+                                <option value="">Selecione...</option>
+                                <option value="Aramado bagunçado">Aramado bagunçado</option>
+                                <option value="Saco/caixa aberto">Saco/caixa aberto</option>
+                                <option value="Saco/caixa avariado">Saco/caixa avariado</option>
+                                <option value="Placa de identificação incorreta">Placa de identificação incorreta</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="responsavelDivergencia_${blocoId}">Responsável *</label>
+                            <input type="text" id="responsavelDivergencia_${blocoId}" placeholder="Nome do responsável">
+                        </div>
+                        <div class="form-group">
+                            <label for="turnoResponsavel_${blocoId}">Turno responsável *</label>
+                            <select id="turnoResponsavel_${blocoId}">
+                                <option value="">Selecione...</option>
+                                <option value="Turno 11">Turno 11</option>
+                                <option value="Turno 21">Turno 21</option>
+                                <option value="Turno 31">Turno 31</option>
+                                <option value="Turno 16">Turno 16</option>
+                                <option value="Turno 26">Turno 26</option>
+                                <option value="Turno 36">Turno 36</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title" style="margin-top: 20px;">Contagem e Registro de Itens</div>
+                <table class="itens-table" id="itensTable_${blocoId}">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th style="width:110px;">Quantidade</th>
+                            <th style="width:130px;">Conforme?</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="itensTableBody_${blocoId}"></tbody>
+                </table>
+                <button type="button" class="btn-add" onclick="adicionarItem(${blocoId})">+ Adicionar Item</button>
+
+                <div class="form-group full-width" style="margin-top: 16px;">
+                    <label for="observacoes_${blocoId}">Observações livres (opcional)</label>
+                    <textarea id="observacoes_${blocoId}" rows="3" placeholder="Descreva aqui qualquer observação adicional sobre esta auditoria..."></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Fotos (Opcional)</label>
+                    <label class="upload-area" for="fotoInput_${blocoId}">
+                        <div class="upload-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </div>
+                        <span class="upload-title">Anexar ou capturar fotos</span>
+                        <span class="upload-subtitle">Clique para selecionar ou usar a câmera (PNG, JPG, WEBP) — até ${MAX_FOTOS} fotos</span>
+                    </label>
+                    <input type="file" id="fotoInput_${blocoId}" accept="image/*" multiple style="display:none;" onchange="handleFotoUpload(event, ${blocoId})">
+                    <div id="photoPreviewGrid_${blocoId}" class="photo-grid"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renumerarBlocos() {
+        const blocos = Array.from(document.querySelectorAll('.bloco-auditoria'));
+        blocos.forEach((el, index) => {
+            const numeroEl = el.querySelector('.bloco-numero');
+            if (numeroEl) numeroEl.textContent = 'Plano de Auditoria #' + (index + 1);
+        });
+    }
+
+    function criarPlanoAuditoria() {
+        blocoCounter++;
+        const blocoId = blocoCounter;
+        blocosState[blocoId] = { itemIdCounter: 0, fotos: [], fotoIdCounter: 0 };
+
+        const container = document.getElementById('blocosContainer');
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = templateBloco(blocoId).trim();
+        const blocoEl = wrapper.firstElementChild;
+        container.appendChild(blocoEl);
+
+        blocoEl.querySelectorAll(`input[name="aramadoConforme_${blocoId}"]`).forEach(radio => {
+            radio.addEventListener('change', function () {
+                const secao = document.getElementById('secaoMotivoDivergencia_' + blocoId);
+                const ehNao = this.value === 'Não';
+                secao.style.display = ehNao ? 'block' : 'none';
+                document.getElementById('motivo_' + blocoId).required = ehNao;
+                document.getElementById('responsavelDivergencia_' + blocoId).required = ehNao;
+                document.getElementById('turnoResponsavel_' + blocoId).required = ehNao;
+            });
+        });
+
+        // Começa com 3 linhas em branco para agilizar o preenchimento
+        adicionarItem(blocoId);
+        adicionarItem(blocoId);
+        adicionarItem(blocoId);
+
+        document.getElementById('btnCriarPlano').textContent = '+ Adicionar Novo Plano de Auditoria';
+        document.getElementById('finalizarWrapper').style.display = 'block';
+
+        renumerarBlocos();
+        blocoEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return blocoEl;
+    }
+
+    function removerBloco(blocoId) {
+        if (!confirm('Remover este plano de auditoria?')) return;
+        const el = document.getElementById('bloco-' + blocoId);
+        if (el) el.remove();
+        delete blocosState[blocoId];
+        renumerarBlocos();
+        if (document.querySelectorAll('.bloco-auditoria').length === 0) {
+            document.getElementById('btnCriarPlano').textContent = '▶ Criar Plano de Auditoria';
+            document.getElementById('finalizarWrapper').style.display = 'none';
+        }
+    }
+
+    // ===== Itens (por bloco) =====
+
+    function adicionarItem(blocoId) {
+        const state = blocosState[blocoId];
+        const id = ++state.itemIdCounter;
+        const tbody = document.getElementById('itensTableBody_' + blocoId);
+        const tr = document.createElement('tr');
+        tr.dataset.itemId = id;
+        tr.innerHTML = `
+            <td><input type="text" class="input-item-nome" placeholder="Ex: Item 4521" required></td>
+            <td><input type="number" class="input-item-qtd" min="0" placeholder="0" required></td>
+            <td>
+                <select class="select-item-conforme" required>
+                    <option value="">Selecione...</option>
+                    <option value="Sim">Sim</option>
+                    <option value="Não">Não</option>
+                    <option value="N/A">N/A</option>
+                </select>
+            </td>
+            <td><button type="button" class="btn-remove" onclick="removerItem(${blocoId}, ${id})">X</button></td>
+        `;
+        tbody.appendChild(tr);
+
+        tr.querySelector('.select-item-conforme').addEventListener('change', function () {
+            tr.classList.remove('row-sim', 'row-nao');
+            if (this.value === 'Sim') tr.classList.add('row-sim');
+            else if (this.value === 'Não') tr.classList.add('row-nao');
+
+            const linhaExistente = document.querySelector(`#itensTableBody_${blocoId} tr.item-divergencia-row[data-item-id="${id}"]`);
+
+            if (this.value === 'Não') {
+                if (linhaExistente) return;
+                const trDivergencia = document.createElement('tr');
+                trDivergencia.className = 'item-divergencia-row';
+                trDivergencia.dataset.itemId = id;
+                trDivergencia.innerHTML = `
+                    <td colspan="4">
+                        <div class="item-divergencia-fields">
+                            <div>
+                                <label for="itemMotivo_${blocoId}_${id}">Motivo *</label>
+                                <select id="itemMotivo_${blocoId}_${id}" class="select-item-motivo" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Falta">Falta</option>
+                                    <option value="Sobra">Sobra</option>
+                                    <option value="Material trocado">Material trocado</option>
+                                    <option value="Avarias">Avarias</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="itemResponsavel_${blocoId}_${id}">Responsável *</label>
+                                <input type="text" id="itemResponsavel_${blocoId}_${id}" class="input-item-responsavel" placeholder="Nome do responsável" required>
+                            </div>
+                            <div>
+                                <label for="itemTurnoResponsavel_${blocoId}_${id}">Turno responsável *</label>
+                                <select id="itemTurnoResponsavel_${blocoId}_${id}" class="select-item-turno-responsavel" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Turno 11">Turno 11</option>
+                                    <option value="Turno 21">Turno 21</option>
+                                    <option value="Turno 31">Turno 31</option>
+                                    <option value="Turno 16">Turno 16</option>
+                                    <option value="Turno 26">Turno 26</option>
+                                    <option value="Turno 36">Turno 36</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tr.insertAdjacentElement('afterend', trDivergencia);
+            } else if (linhaExistente) {
+                linhaExistente.remove();
+            }
+        });
+    }
+
+    function removerItem(blocoId, id) {
+        const tr = document.querySelector(`#itensTableBody_${blocoId} tr[data-item-id="${id}"]`);
+        const trDivergencia = document.querySelector(`#itensTableBody_${blocoId} tr.item-divergencia-row[data-item-id="${id}"]`);
+        if (tr) tr.remove();
+        if (trDivergencia) trDivergencia.remove();
+    }
+
+    // ===== Fotos (por bloco) =====
+
+    async function handleFotoUpload(event, blocoId) {
+        const state = blocosState[blocoId];
+        const files = Array.from(event.target.files).filter(f => f.type.startsWith('image/'));
+        const grid = document.getElementById('photoPreviewGrid_' + blocoId);
+
+        if (state.fotos.length >= MAX_FOTOS) {
+            alert(`Limite de ${MAX_FOTOS} fotos atingido nesta auditoria.`);
+            event.target.value = '';
+            return;
+        }
+        const espacoDisponivel = MAX_FOTOS - state.fotos.length;
+        const arquivos = files.slice(0, espacoDisponivel);
+        if (files.length > arquivos.length) {
+            alert(`Só é possível adicionar mais ${espacoDisponivel} foto(s) nesta auditoria (limite de ${MAX_FOTOS}).`);
+        }
+
+        for (const file of arquivos) {
+            try {
+                const base64 = await comprimirImagem(file);
+                const fotoId = 'foto_' + blocoId + '_' + (state.fotoIdCounter++) + '_' + Date.now();
+                state.fotos.push({ id: fotoId, src: base64, caption: '' });
+
+                const card = document.createElement('div');
+                card.className = 'photo-card';
+                card.dataset.photoId = fotoId;
+                card.innerHTML = `
+                    <div class="photo-img-wrap">
+                        <img src="${base64}" alt="Foto Auditoria">
+                        <button type="button" class="remove-btn-photo" onclick="removerFoto(${blocoId}, '${fotoId}')">&times;</button>
+                    </div>
+                    <input type="text" class="caption-input" placeholder="Ex: Item 3 / Divergência..." oninput="atualizarLegendaFoto(${blocoId}, '${fotoId}', this.value)">
+                `;
+                grid.appendChild(card);
+            } catch (err) {
+                console.error('Erro ao processar foto:', err);
+            }
+        }
+        event.target.value = '';
+    }
+
+    function removerFoto(blocoId, fotoId) {
+        const state = blocosState[blocoId];
+        state.fotos = state.fotos.filter(f => f.id !== fotoId);
+        const card = document.querySelector(`#bloco-${blocoId} .photo-card[data-photo-id="${fotoId}"]`);
+        if (card) card.remove();
+    }
+
+    function atualizarLegendaFoto(blocoId, fotoId, caption) {
+        const foto = blocosState[blocoId].fotos.find(f => f.id === fotoId);
+        if (foto) foto.caption = caption;
+    }
+
+    // ===== Coleta de dados e geração do relatório =====
+
+    function coletarDadosGerais() {
+        return {
+            data: document.getElementById('data').value,
+            unidade: document.getElementById('unidade').value,
+            turno: document.getElementById('turno').value,
+            responsavel: document.getElementById('responsavel').value
+        };
+    }
+
+    function coletarDadosBloco(blocoId) {
+        const blocoEl = document.getElementById('bloco-' + blocoId);
+        const state = blocosState[blocoId];
+
+        const itens = Array.from(blocoEl.querySelectorAll(`#itensTableBody_${blocoId} tr:not(.item-divergencia-row)`)).map(tr => {
+            const itemId = tr.dataset.itemId;
+            const conforme = tr.querySelector('.select-item-conforme').value;
+            const item = {
+                nome: tr.querySelector('.input-item-nome').value,
+                quantidade: tr.querySelector('.input-item-qtd').value,
+                conforme,
+                motivo: '',
+                responsavel: '',
+                turnoResponsavel: ''
+            };
+            if (conforme === 'Não') {
+                const trDivergencia = blocoEl.querySelector(`.item-divergencia-row[data-item-id="${itemId}"]`);
+                if (trDivergencia) {
+                    item.motivo = trDivergencia.querySelector('.select-item-motivo').value;
+                    item.responsavel = trDivergencia.querySelector('.input-item-responsavel').value;
+                    item.turnoResponsavel = trDivergencia.querySelector('.select-item-turno-responsavel').value;
+                }
+            }
+            return item;
+        });
+
+        return {
+            identificador: document.getElementById('identificador_' + blocoId).value,
+            aramadoConforme: (blocoEl.querySelector(`input[name="aramadoConforme_${blocoId}"]:checked`) || {}).value || '',
+            motivo: document.getElementById('motivo_' + blocoId).value,
+            responsavelDivergencia: document.getElementById('responsavelDivergencia_' + blocoId).value,
+            turnoResponsavel: document.getElementById('turnoResponsavel_' + blocoId).value,
+            observacoes: document.getElementById('observacoes_' + blocoId).value,
+            itens,
+            fotos: state.fotos
+        };
+    }
+
+    function finalizarAuditorias() {
+        const blocoEls = Array.from(document.querySelectorAll('.bloco-auditoria'));
+        const statusMsg = document.getElementById('statusMessage');
+
+        if (blocoEls.length === 0) {
+            statusMsg.className = 'status-message error';
+            statusMsg.textContent = 'Crie ao menos um plano de auditoria antes de finalizar.';
+            return;
+        }
+
+        // Valida as informações gerais
+        const camposGerais = ['data', 'unidade', 'turno', 'responsavel'];
+        for (const id of camposGerais) {
+            const el = document.getElementById(id);
+            if (!el.value) {
+                statusMsg.className = 'status-message error';
+                statusMsg.textContent = 'Preencha todas as Informações Gerais antes de finalizar.';
+                el.reportValidity();
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+        }
+
+        // Valida cada bloco (usa a validação nativa do HTML5)
+        for (const el of blocoEls) {
+            const invalido = el.querySelector(':invalid');
+            if (invalido) {
+                invalido.reportValidity();
+                invalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            const itens = el.querySelectorAll('tbody tr');
+            if (itens.length === 0) {
+                statusMsg.className = 'status-message error';
+                statusMsg.textContent = 'Cada plano de auditoria precisa ter ao menos um item na contagem.';
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+        }
+
+        statusMsg.style.display = 'none';
+
+        const dadosGerais = coletarDadosGerais();
+        const blocoIds = blocoEls.map(el => Number(el.dataset.blocoId));
+        const auditorias = blocoIds.map(coletarDadosBloco);
+
+        abrirRelatorio(dadosGerais, auditorias);
+    }
+
+    function buildBlocoReportHtml(dadosGerais, aud, indice) {
+        const itensRows = aud.itens.map(item => {
+            const rowClass = item.conforme === 'Não' ? 'row-nao' : (item.conforme === 'Sim' ? 'row-sim' : '');
+            const motivoTexto = item.conforme === 'Não' ? (item.motivo || '-') : '-';
+            const respTexto = item.conforme === 'Não' ? (item.responsavel || '-') : '-';
+            const turnoTexto = item.conforme === 'Não' ? (item.turnoResponsavel || '-') : '-';
+            return `<tr class="${rowClass}"><td>${item.nome || '-'}</td><td>${item.quantidade || '-'}</td><td><strong>${item.conforme || '-'}</strong></td><td>${motivoTexto}</td><td>${respTexto}</td><td>${turnoTexto}</td></tr>`;
+        }).join('');
+
+        return `
+            <div class="relatorio-bloco">
+                <div class="header">
+                    <h1>GRUPO KRONA - AUDITORIA ROTATIVA - ZONA DE SEPARAÇÃO</h1>
+                    <p style="margin-top:4px; font-size:12px; opacity:0.9;">Plano de Auditoria #${indice} — Identificador: ${aud.identificador || '-'}</p>
+                </div>
+
+                <div class="section-title">1. Informações Gerais</div>
+                <div class="grid">
+                    <div class="grid-item"><strong>Identificador:</strong> ${aud.identificador || '-'}</div>
+                    <div class="grid-item"><strong>Data:</strong> ${formatarDataBR(dadosGerais.data)}</div>
+                    <div class="grid-item"><strong>Unidade:</strong> ${dadosGerais.unidade || '-'}</div>
+                    <div class="grid-item"><strong>Turno:</strong> ${dadosGerais.turno || '-'}</div>
+                    <div class="grid-item"><strong>Responsável:</strong> ${dadosGerais.responsavel || '-'}</div>
+                </div>
+
+                <div class="section-title">2. Aramado / Pallet</div>
+                <p style="font-size: 12px; margin-bottom: 8px;">
+                    <strong>Aramado/pallet conforme?</strong>
+                    <span class="status-tag" style="background:${aud.aramadoConforme === 'Sim' ? '#16a34a' : '#dc2626'};">${aud.aramadoConforme || '-'}</span>
+                </p>
+                ${aud.aramadoConforme === 'Não' ? `
+                    <div class="grid">
+                        <div class="grid-item"><strong>Motivo:</strong> ${aud.motivo || '-'}</div>
+                        <div class="grid-item"><strong>Responsável:</strong> ${aud.responsavelDivergencia || '-'}</div>
+                        <div class="grid-item"><strong>Turno Responsável:</strong> ${aud.turnoResponsavel || '-'}</div>
+                    </div>
+                ` : ''}
+
+                <div class="section-title">3. Contagem e Registro de Itens</div>
+                <table class="report-table">
+                    <thead><tr><th>Item</th><th>Quantidade</th><th>Conforme?</th><th>Motivo</th><th>Responsável</th><th>Turno Responsável</th></tr></thead>
+                    <tbody>${itensRows}</tbody>
+                </table>
+
+                ${aud.observacoes ? `
+                    <div class="section-title">4. Observações</div>
+                    <div class="obs-box">${aud.observacoes}</div>
+                ` : ''}
+
+                ${aud.fotos && aud.fotos.length > 0 ? `
+                    <div class="section-title">5. Registros Fotográficos</div>
+                    <div class="photos-report-grid">
+                        ${aud.fotos.map((foto, i) => `
+                            <figure>
+                                <img src="${foto.src}" alt="Evidência ${i + 1}">
+                                <figcaption>${foto.caption && foto.caption.trim() ? foto.caption : 'Foto ' + (i + 1) + ' (sem legenda)'}</figcaption>
+                            </figure>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    function calcularScoreGeral(auditorias) {
+        let obtido = 0, maximo = 0;
+        auditorias.forEach(aud => {
+            if (aud.aramadoConforme === 'Sim') { obtido += 1; maximo += 1; }
+            else if (aud.aramadoConforme === 'Não') { maximo += 1; }
+
+            aud.itens.forEach(item => {
+                if (item.conforme === 'Sim') { obtido += 1; maximo += 1; }
+                else if (item.conforme === 'Não') { maximo += 1; }
+                // N/A não entra na contagem
+            });
+        });
+        return maximo > 0 ? Math.round((obtido / maximo) * 100) : null;
+    }
+
+    function calcularDivergenciasPorTurno(auditorias) {
+        const contagem = {};
+        auditorias.forEach(aud => {
+            if (aud.aramadoConforme === 'Não') {
+                const turno = aud.turnoResponsavel || 'Não informado';
+                contagem[turno] = (contagem[turno] || 0) + 1;
+            }
+            aud.itens.forEach(item => {
+                if (item.conforme === 'Não') {
+                    const turno = item.turnoResponsavel || 'Não informado';
+                    contagem[turno] = (contagem[turno] || 0) + 1;
+                }
+            });
+        });
+        return contagem;
+    }
+
+    function calcularResponsaveisPorDivergencia(auditorias) {
+        const contagem = {};
+        auditorias.forEach(aud => {
+            if (aud.aramadoConforme === 'Não') {
+                const nome = aud.responsavelDivergencia || 'Não informado';
+                contagem[nome] = (contagem[nome] || 0) + 1;
+            }
+            aud.itens.forEach(item => {
+                if (item.conforme === 'Não') {
+                    const nome = item.responsavel || 'Não informado';
+                    contagem[nome] = (contagem[nome] || 0) + 1;
+                }
+            });
+        });
+        return contagem;
+    }
+
+    function calcularMotivosPorDivergencia(auditorias) {
+        const contagem = {};
+        auditorias.forEach(aud => {
+            if (aud.aramadoConforme === 'Não') {
+                const motivo = aud.motivo || 'Não informado';
+                contagem[motivo] = (contagem[motivo] || 0) + 1;
+            }
+            aud.itens.forEach(item => {
+                if (item.conforme === 'Não') {
+                    const motivo = item.motivo || 'Não informado';
+                    contagem[motivo] = (contagem[motivo] || 0) + 1;
+                }
+            });
+        });
+        return contagem;
+    }
+
+    function abrirRelatorio(dadosGerais, auditorias) {
+        const secoes = auditorias.map((aud, i) => buildBlocoReportHtml(dadosGerais, aud, i + 1)).join('');
+
+        const scorePct = calcularScoreGeral(auditorias);
+        const scoreEhValido = scorePct !== null;
+        const scoreColor = !scoreEhValido ? '#64748b' : (scorePct >= 90 ? '#16a34a' : (scorePct >= 70 ? '#d97706' : '#dc2626'));
+        const scoreTexto = scoreEhValido ? scorePct + '%' : 'N/A';
+
+        const divergenciasPorTurno = calcularDivergenciasPorTurno(auditorias);
+        const turnosComDivergencia = Object.keys(divergenciasPorTurno);
+        const totalDivergencias = turnosComDivergencia.reduce((soma, t) => soma + divergenciasPorTurno[t], 0);
+
+        const responsaveisPorDivergencia = calcularResponsaveisPorDivergencia(auditorias);
+        const nomesComDivergencia = Object.keys(responsaveisPorDivergencia);
+
+        const motivosPorDivergencia = calcularMotivosPorDivergencia(auditorias);
+        const motivosComDivergencia = Object.keys(motivosPorDivergencia);
+
+        const resumoHtml = `
+            <div class="header">
+                <h1>GRUPO KRONA - AUDITORIA ROTATIVA - ZONA DE SEPARAÇÃO</h1>
+                <p style="margin-top:4px; font-size:12px; opacity:0.9;">Resumo Geral — ${auditorias.length} plano(s) de auditoria realizado(s)</p>
+            </div>
+
+            <table class="resumo-table">
+                <tr>
+                    <td class="score-box" style="background: ${scoreColor} !important;">
+                        <span>Score Geral da Auditoria</span>
+                        <h2>${scoreTexto}</h2>
+                    </td>
+                    <td class="divergencia-card">
+                        <span>Divergências por Turno Responsável</span>
+                        ${turnosComDivergencia.length > 0 ? `
+                            <table class="turno-table">
+                                ${turnosComDivergencia.map(t => `<tr><td>${t}</td><td><strong>${divergenciasPorTurno[t]}</strong></td></tr>`).join('')}
+                            </table>
+                            <div class="turno-total">Total: ${totalDivergencias} divergência(s)</div>
+                        ` : `<div class="turno-total" style="margin-top:10px;">Nenhuma divergência registrada</div>`}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="divergencia-card">
+                        <span>Responsáveis pela Divergência</span>
+                        ${nomesComDivergencia.length > 0 ? `
+                            <table class="turno-table">
+                                ${nomesComDivergencia.map(n => `<tr><td>${n}</td><td><strong>${responsaveisPorDivergencia[n]}</strong></td></tr>`).join('')}
+                            </table>
+                        ` : `<div class="turno-total" style="margin-top:10px;">Nenhuma divergência registrada</div>`}
+                    </td>
+                    <td class="divergencia-card">
+                        <span>Motivos das Divergências Encontradas</span>
+                        ${motivosComDivergencia.length > 0 ? `
+                            <table class="turno-table">
+                                ${motivosComDivergencia.map(m => `<tr><td>${m}</td><td><strong>${motivosPorDivergencia[m]}</strong></td></tr>`).join('')}
+                            </table>
+                        ` : `<div class="turno-total" style="margin-top:10px;">Nenhuma divergência registrada</div>`}
+                    </td>
+                </tr>
+            </table>
+            <div class="resumo-page-break"></div>
+        `;
+
+        const reportHtml = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+            <meta charset="UTF-8">
+            <title>Relatório - Auditoria Rotativa Zona de Separação</title>
+            <style>
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                body { font-family: 'Segoe UI', Arial, sans-serif; padding: 25px; color: #1e293b; background: #fff; }
+                .header { background: #003865 !important; color: #ffffff !important; padding: 18px; text-align: center; border-radius: 6px; }
+                .header h1 { margin: 0; font-size: 18px; font-weight: bold; color: #ffffff !important; }
+                .section-title { font-size: 13px; font-weight: bold; color: #003865 !important; border-bottom: 2px solid #005691; padding-bottom: 4px; margin: 20px 0 10px 0; text-transform: uppercase; }
+                .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 16px; font-size: 12px; }
+                .grid-item strong { color: #475569 !important; }
+                .report-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+                .report-table th, .report-table td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+                .report-table th { background: #f1f5f9 !important; color: #003865 !important; }
+                .row-nao { background: #fef2f2 !important; }
+                .row-sim { background: #f0fdf4 !important; }
+                .status-tag { display: inline-block; padding: 4px 12px; border-radius: 12px; color: #fff !important; font-weight: bold; font-size: 12px; }
+                .obs-box { font-size: 12px; background: #f8fafc !important; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; white-space: pre-wrap; margin-top: 6px; }
+                .photos-report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; }
+                .photos-report-grid figure { margin: 0; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; page-break-inside: avoid; }
+                .photos-report-grid img { width: 100%; height: 120px; object-fit: cover; display: block; }
+                .photos-report-grid figcaption { font-size: 10px; padding: 5px 6px; background: #f8fafc !important; border-top: 1px solid #cbd5e1; color: #1e293b !important; }
+                .relatorio-bloco + .relatorio-bloco { page-break-before: always; margin-top: 24px; }
+
+                .resumo-table { width: 100%; border-collapse: separate; border-spacing: 15px 15px; margin: 20px 0 10px 0; table-layout: fixed; }
+                .resumo-table .score-box { width: 35%; color: #ffffff !important; padding: 20px; text-align: center; border-radius: 8px; vertical-align: middle; }
+                .score-box span { font-size: 12px; text-transform: uppercase; font-weight: 600; color: #ffffff !important; }
+                .score-box h2 { margin: 8px 0 0 0; font-size: 32px; color: #ffffff !important; }
+                .divergencia-card { background: #f8fafc !important; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; vertical-align: top; }
+                .divergencia-card > span { font-size: 12px; text-transform: uppercase; font-weight: 600; color: #475569 !important; display: block; margin-bottom: 10px; }
+                .turno-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+                .turno-table td { padding: 6px 4px; border-bottom: 1px solid #e2e8f0; color: #1e293b !important; }
+                .turno-table td:last-child { text-align: right; color: #003865 !important; }
+                .turno-total { margin-top: 10px; font-size: 12px; font-weight: 700; color: #003865 !important; text-align: right; }
+                .resumo-page-break { page-break-after: always; }
+
+                @media print { .no-print { display: none !important; } body { padding: 0; } }
+            </style>
+            </head>
+            <body>
+                <div class="no-print" style="margin-bottom: 15px; text-align: right;">
+                    <button onclick="window.print()" style="background: #003865; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Salvar como PDF / Imprimir</button>
+                </div>
+                ${resumoHtml}
+                ${secoes}
+            </body>
+            </html>
+        `;
+
+        const win = window.open('', '_blank');
+        if (!win || win.closed || typeof win.closed === 'undefined') {
+            alert('O navegador bloqueou a abertura do relatório.\n\nPermita pop-ups para esta página e tente novamente.');
+            return;
+        }
+        win.document.write(reportHtml);
+        win.document.close();
+        setTimeout(() => { win.print(); }, 500);
+    }
+</script>
+
+</body>
+</html>
