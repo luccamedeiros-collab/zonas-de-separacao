@@ -24,10 +24,15 @@
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
     body {
         background-color: var(--bg-color);
         color: var(--text-color);
-        padding: 20px;
+        padding: 10px;
         display: flex;
         justify-content: center;
     }
@@ -39,13 +44,13 @@
         border-radius: 12px;
         box-shadow: 0 4px 16px rgba(0, 56, 101, 0.12);
         overflow: hidden;
-        margin-bottom: 40px;
+        margin-bottom: 24px;
     }
 
     .header {
         background-color: var(--krona-blue);
         color: #ffffff;
-        padding: 32px 24px;
+        padding: 20px 16px;
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -55,19 +60,19 @@
     }
 
     .header h1 {
-        font-size: 1.7rem;
-        margin-bottom: 8px;
+        font-size: 1.3rem;
+        margin-bottom: 6px;
         font-weight: 700;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
     }
 
     .header p {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         opacity: 0.9;
     }
 
     form {
-        padding: 28px 32px;
+        padding: 16px;
     }
 
     .section-title {
@@ -180,36 +185,70 @@
         font-size: 0.85rem;
     }
 
+    .table-scroll-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 6px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+
+    .table-scroll-hint {
+        font-size: 0.72rem;
+        color: #64748b;
+        text-align: right;
+        margin-top: 4px;
+        margin-bottom: 8px;
+    }
+
     .itens-table {
         width: 100%;
+        min-width: 620px;
         border-collapse: collapse;
-        margin-top: 6px;
     }
 
     .itens-table th {
         background: #e2e8f0;
         color: var(--krona-blue);
         text-align: left;
-        padding: 8px 10px;
-        font-size: 0.85rem;
+        padding: 6px 6px;
+        font-size: 0.72rem;
         border: 1px solid var(--border-color);
+        white-space: nowrap;
     }
 
     .itens-table td {
-        padding: 6px;
+        padding: 4px;
         border: 1px solid var(--border-color);
     }
 
     .itens-table td:last-child {
         text-align: center;
-        width: 60px;
+        width: 40px;
     }
 
     .itens-table input, .itens-table select {
         border: 1px solid transparent;
         background: transparent;
-        padding: 6px 8px;
+        padding: 6px 4px;
+        font-size: 0.85rem;
+        min-width: 70px;
     }
+
+    .itens-table td:nth-child(1) input,
+    .itens-table td:nth-child(3) input {
+        min-width: 90px;
+    }
+
+    .itens-table .diferenca-cell {
+        text-align: center;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .itens-table .diferenca-cell.dif-zero { color: var(--success-color); }
+    .itens-table .diferenca-cell.dif-nao-zero { color: var(--danger-color); }
 
     .itens-table input:focus, .itens-table select:focus {
         background: #fff;
@@ -219,6 +258,29 @@
 
     .itens-table tr.row-nao { background: #fef2f2; }
     .itens-table tr.row-sim { background: #f0fdf4; }
+
+    /* Colunas do WMS destacadas em azul claro, para diferenciar da contagem física */
+    .itens-table th:nth-child(3),
+    .itens-table th:nth-child(4),
+    .itens-table td:nth-child(3),
+    .itens-table td:nth-child(4) {
+        background: #dbeafe;
+    }
+
+    .itens-table th:nth-child(3) { color: var(--krona-blue); }
+
+    .btn-remove-table {
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.75rem;
+        padding: 0;
+    }
 
     .item-divergencia-row td {
         background: #fff5f5;
@@ -282,6 +344,31 @@
         color: #b91c1c;
         border: 1px solid #fca5a5;
         display: block;
+    }
+
+    .draft-banner {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: #eff6ff;
+        border: 1px solid #93c5fd;
+        color: #1e3a8a;
+        padding: 10px 14px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 0.85rem;
+    }
+
+    .btn-clear-draft {
+        background: #fff;
+        border: 1px solid #93c5fd;
+        color: #1e3a8a;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        align-self: flex-start;
     }
 
     textarea {
@@ -468,6 +555,11 @@
     </div>
 
     <form id="auditForm" onsubmit="return false;">
+        <div id="draftBanner" class="draft-banner" style="display:none;">
+            <span>📥 Rascunho anterior restaurado automaticamente.</span>
+            <button type="button" class="btn-clear-draft" onclick="limparRascunho()">Descartar e começar do zero</button>
+        </div>
+
         <div class="section-title">Informações Gerais</div>
         <div class="form-grid">
             <div class="form-group">
@@ -517,6 +609,29 @@
     // ===== Estado geral =====
     let blocoCounter = 0;
     const blocosState = {}; // { [blocoId]: { itemIdCounter, fotos: [], fotoIdCounter } }
+
+    // ===== Rascunho automático (localStorage) =====
+    const DRAFT_STORAGE_KEY = 'auditoriaZonaSeparacaoRascunho';
+    let storageAvailable = true;
+    let isRestoringRascunho = false;
+
+    (function testStorageAvailability() {
+        try {
+            localStorage.setItem('__storage_test__', '1');
+            localStorage.removeItem('__storage_test__');
+        } catch (e) {
+            storageAvailable = false;
+            console.warn('localStorage indisponível — o rascunho automático ficará desativado.');
+        }
+    })();
+
+    function debounce(fn, delayMs) {
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => fn.apply(this, args), delayMs);
+        };
+    }
 
     // ===== Fotos (compressão) =====
     const MAX_FOTOS = 15;
@@ -614,19 +729,23 @@
                 </div>
 
                 <div class="section-title" style="margin-top: 20px;">Contagem e Verificação com o WMS</div>
-                <table class="itens-table" id="itensTable_${blocoId}">
-                    <thead>
-                        <tr>
-                            <th>Item Físico</th>
-                            <th style="width:100px;">Qtde Físico</th>
-                            <th>Item WMS</th>
-                            <th style="width:100px;">Qtde WMS</th>
-                            <th style="width:130px;">Conforme?</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="itensTableBody_${blocoId}"></tbody>
-                </table>
+                <div class="table-scroll-wrapper">
+                    <table class="itens-table" id="itensTable_${blocoId}">
+                        <thead>
+                            <tr>
+                                <th>Item Físico</th>
+                                <th>Qtde Físico</th>
+                                <th>Item WMS</th>
+                                <th>Qtde WMS</th>
+                                <th>Diferença</th>
+                                <th>Conforme?</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itensTableBody_${blocoId}"></tbody>
+                    </table>
+                </div>
+                <div class="table-scroll-hint">← deslize a tabela para o lado →</div>
                 <button type="button" class="btn-add" onclick="adicionarItem(${blocoId})">+ Adicionar Item</button>
 
                 <div class="form-group full-width" style="margin-top: 16px;">
@@ -635,7 +754,7 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Fotos (Opcional)</label>
+                    <label id="fotosLabel_${blocoId}">Fotos (obrigatório em caso de divergência)</label>
                     <label class="upload-area" for="fotoInput_${blocoId}">
                         <div class="upload-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -692,7 +811,9 @@
         document.getElementById('finalizarWrapper').style.display = 'block';
 
         renumerarBlocos();
-        blocoEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!isRestoringRascunho) {
+            blocoEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         return blocoEl;
     }
 
@@ -706,6 +827,7 @@
             document.getElementById('btnCriarPlano').textContent = '▶ Criar Plano de Auditoria';
             document.getElementById('finalizarWrapper').style.display = 'none';
         }
+        salvarRascunho();
     }
 
     // ===== Itens (por bloco) =====
@@ -721,6 +843,7 @@
             <td><input type="number" class="input-item-qtd" min="0" placeholder="0" required></td>
             <td><input type="text" class="input-item-nome-wms" placeholder="Ex: Item 4521" required></td>
             <td><input type="number" class="input-item-qtd-wms" min="0" placeholder="0" required></td>
+            <td class="diferenca-cell dif-zero">0</td>
             <td>
                 <select class="select-item-conforme" required>
                     <option value="">Selecione...</option>
@@ -729,8 +852,43 @@
                     <option value="N/A">N/A</option>
                 </select>
             </td>
-            <td><button type="button" class="btn-remove" onclick="removerItem(${blocoId}, ${id})">X</button></td>
+            <td><button type="button" class="btn-remove-table" onclick="removerItem(${blocoId}, ${id})">X</button></td>
         `;
+
+        function atualizarDiferenca() {
+            const qtdFisicoStr = tr.querySelector('.input-item-qtd').value;
+            const qtdWMSStr = tr.querySelector('.input-item-qtd-wms').value;
+            const qtdFisico = parseFloat(qtdFisicoStr) || 0;
+            const qtdWMS = parseFloat(qtdWMSStr) || 0;
+            const diferenca = qtdFisico - qtdWMS;
+            const celulaDif = tr.querySelector('.diferenca-cell');
+            celulaDif.textContent = (diferenca > 0 ? '+' : '') + diferenca;
+            celulaDif.classList.toggle('dif-zero', diferenca === 0);
+            celulaDif.classList.toggle('dif-nao-zero', diferenca !== 0);
+
+            // Sugestão automática do Conforme? com base na diferença — só preenche
+            // sozinho enquanto o campo ainda não foi escolhido manualmente, pra não
+            // sobrescrever uma resposta que o usuário já deu de propósito.
+            const selectConforme = tr.querySelector('.select-item-conforme');
+            if (qtdFisicoStr !== '' && qtdWMSStr !== '' && !selectConforme.dataset.escolhaManual) {
+                selectConforme.dataset.origemAutomatica = '1';
+                selectConforme.value = diferenca === 0 ? 'Sim' : 'Não';
+                selectConforme.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+        tr.querySelector('.input-item-qtd').addEventListener('input', atualizarDiferenca);
+        tr.querySelector('.input-item-qtd-wms').addEventListener('input', atualizarDiferenca);
+        tr.querySelector('.select-item-conforme').addEventListener('change', function () {
+            // Se a própria sugestão automática disparou esta mudança, o flag
+            // "origemAutomatica" já foi setado antes do dispatch — nesse caso não
+            // conta como escolha manual. Qualquer outra mudança (o usuário mexendo
+            // no campo) conta como manual e trava a sugestão automática dali pra frente.
+            if (this.dataset.origemAutomatica) {
+                delete this.dataset.origemAutomatica;
+            } else {
+                this.dataset.escolhaManual = '1';
+            }
+        }, { capture: true });
         tbody.appendChild(tr);
 
         tr.querySelector('.select-item-conforme').addEventListener('change', function () {
@@ -746,7 +904,7 @@
                 trDivergencia.className = 'item-divergencia-row';
                 trDivergencia.dataset.itemId = id;
                 trDivergencia.innerHTML = `
-                    <td colspan="6">
+                    <td colspan="7">
                         <div class="item-divergencia-fields">
                             <div>
                                 <label for="itemMotivo_${blocoId}_${id}">Motivo *</label>
@@ -789,6 +947,7 @@
         const trDivergencia = document.querySelector(`#itensTableBody_${blocoId} tr.item-divergencia-row[data-item-id="${id}"]`);
         if (tr) tr.remove();
         if (trDivergencia) trDivergencia.remove();
+        salvarRascunho();
     }
 
     // ===== Fotos (por bloco) =====
@@ -831,6 +990,7 @@
             }
         }
         event.target.value = '';
+        salvarRascunho();
     }
 
     function removerFoto(blocoId, fotoId) {
@@ -838,11 +998,13 @@
         state.fotos = state.fotos.filter(f => f.id !== fotoId);
         const card = document.querySelector(`#bloco-${blocoId} .photo-card[data-photo-id="${fotoId}"]`);
         if (card) card.remove();
+        salvarRascunho();
     }
 
     function atualizarLegendaFoto(blocoId, fotoId, caption) {
         const foto = blocosState[blocoId].fotos.find(f => f.id === fotoId);
         if (foto) foto.caption = caption;
+        salvarRascunhoDebounced();
     }
 
     // ===== Coleta de dados e geração do relatório =====
@@ -863,11 +1025,15 @@
         const itens = Array.from(blocoEl.querySelectorAll(`#itensTableBody_${blocoId} tr:not(.item-divergencia-row)`)).map(tr => {
             const itemId = tr.dataset.itemId;
             const conforme = tr.querySelector('.select-item-conforme').value;
+            const qtdeFisico = tr.querySelector('.input-item-qtd').value;
+            const qtdeWMS = tr.querySelector('.input-item-qtd-wms').value;
+            const diferenca = (parseFloat(qtdeFisico) || 0) - (parseFloat(qtdeWMS) || 0);
             const item = {
                 nomeFisico: tr.querySelector('.input-item-nome').value,
-                qtdeFisico: tr.querySelector('.input-item-qtd').value,
+                qtdeFisico,
                 nomeWMS: tr.querySelector('.input-item-nome-wms').value,
-                qtdeWMS: tr.querySelector('.input-item-qtd-wms').value,
+                qtdeWMS,
+                diferenca,
                 conforme,
                 motivo: '',
                 responsavel: '',
@@ -894,6 +1060,151 @@
             itens,
             fotos: state.fotos
         };
+    }
+
+    // ===== Rascunho automático: coleta, salva, restaura, limpa =====
+
+    function coletarRascunho() {
+        const blocoEls = Array.from(document.querySelectorAll('.bloco-auditoria'));
+        return {
+            dadosGerais: coletarDadosGerais(),
+            blocoCounterSnapshot: blocoCounter,
+            blocos: blocoEls.map(el => {
+                const blocoId = Number(el.dataset.blocoId);
+                const dados = coletarDadosBloco(blocoId);
+                dados.itemIdCounterSnapshot = blocosState[blocoId].itemIdCounter;
+                return dados;
+            }),
+            salvoEm: new Date().toISOString()
+        };
+    }
+
+    function salvarRascunho() {
+        if (!storageAvailable || isRestoringRascunho) return;
+        try {
+            if (document.querySelectorAll('.bloco-auditoria').length === 0) {
+                localStorage.removeItem(DRAFT_STORAGE_KEY);
+                return;
+            }
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(coletarRascunho()));
+        } catch (e) {
+            console.warn('Não foi possível salvar o rascunho (provavelmente espaço insuficiente para as fotos).', e);
+        }
+    }
+
+    const salvarRascunhoDebounced = debounce(salvarRascunho, 800);
+
+    function restaurarRascunho() {
+        if (!storageAvailable) return;
+        let raw;
+        try {
+            raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+        } catch (e) {
+            return;
+        }
+        if (!raw) return;
+
+        let rascunho;
+        try {
+            rascunho = JSON.parse(raw);
+        } catch (e) {
+            return;
+        }
+        if (!rascunho || !Array.isArray(rascunho.blocos) || rascunho.blocos.length === 0) return;
+
+        isRestoringRascunho = true;
+
+        if (rascunho.dadosGerais) {
+            document.getElementById('data').value = rascunho.dadosGerais.data || '';
+            document.getElementById('unidade').value = rascunho.dadosGerais.unidade || '';
+            document.getElementById('turno').value = rascunho.dadosGerais.turno || '';
+            document.getElementById('responsavel').value = rascunho.dadosGerais.responsavel || '';
+        }
+
+        rascunho.blocos.forEach(blocoSalvo => {
+            const blocoEl = criarPlanoAuditoria();
+            const blocoId = Number(blocoEl.dataset.blocoId);
+            const state = blocosState[blocoId];
+
+            document.getElementById('identificador_' + blocoId).value = blocoSalvo.identificador || '';
+            document.getElementById('observacoes_' + blocoId).value = blocoSalvo.observacoes || '';
+
+            if (blocoSalvo.aramadoConforme) {
+                const radio = blocoEl.querySelector(`input[name="aramadoConforme_${blocoId}"][value="${blocoSalvo.aramadoConforme}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+            if (blocoSalvo.aramadoConforme === 'Não') {
+                document.getElementById('motivo_' + blocoId).value = blocoSalvo.motivo || '';
+                document.getElementById('responsavelDivergencia_' + blocoId).value = blocoSalvo.responsavelDivergencia || '';
+                document.getElementById('turnoResponsavel_' + blocoId).value = blocoSalvo.turnoResponsavel || '';
+            }
+
+            // Remove as 3 linhas em branco padrão para recriar exatamente o que foi salvo
+            document.getElementById('itensTableBody_' + blocoId).innerHTML = '';
+            state.itemIdCounter = 0;
+
+            (blocoSalvo.itens || []).forEach(itemSalvo => {
+                adicionarItem(blocoId);
+                const tbody = document.getElementById('itensTableBody_' + blocoId);
+                const row = tbody.lastElementChild;
+
+                row.querySelector('.input-item-nome').value = itemSalvo.nomeFisico || '';
+                row.querySelector('.input-item-qtd').value = itemSalvo.qtdeFisico || '';
+                row.querySelector('.input-item-nome-wms').value = itemSalvo.nomeWMS || '';
+                row.querySelector('.input-item-qtd-wms').value = itemSalvo.qtdeWMS || '';
+                row.querySelector('.input-item-qtd').dispatchEvent(new Event('input', { bubbles: true }));
+
+                const selectConforme = row.querySelector('.select-item-conforme');
+                selectConforme.value = itemSalvo.conforme || '';
+                selectConforme.dispatchEvent(new Event('change', { bubbles: true }));
+
+                if (itemSalvo.conforme === 'Não') {
+                    const itemId = row.dataset.itemId;
+                    const trDivergencia = document.querySelector(`#itensTableBody_${blocoId} tr.item-divergencia-row[data-item-id="${itemId}"]`);
+                    if (trDivergencia) {
+                        trDivergencia.querySelector('.select-item-motivo').value = itemSalvo.motivo || '';
+                        trDivergencia.querySelector('.input-item-responsavel').value = itemSalvo.responsavel || '';
+                        trDivergencia.querySelector('.select-item-turno-responsavel').value = itemSalvo.turnoResponsavel || '';
+                    }
+                }
+            });
+            state.itemIdCounter = blocoSalvo.itemIdCounterSnapshot || state.itemIdCounter;
+
+            if (Array.isArray(blocoSalvo.fotos) && blocoSalvo.fotos.length > 0) {
+                state.fotos = blocoSalvo.fotos;
+                const grid = document.getElementById('photoPreviewGrid_' + blocoId);
+                blocoSalvo.fotos.forEach(photo => {
+                    const card = document.createElement('div');
+                    card.className = 'photo-card';
+                    card.dataset.photoId = photo.id;
+                    card.innerHTML = `
+                        <div class="photo-img-wrap">
+                            <img src="${photo.src}" alt="Foto Auditoria">
+                            <button type="button" class="remove-btn-photo" onclick="removerFoto(${blocoId}, '${photo.id}')">&times;</button>
+                        </div>
+                        <input type="text" class="caption-input" placeholder="Ex: Item 3 / Divergência..." value="${(photo.caption || '').replace(/"/g, '&quot;')}" oninput="atualizarLegendaFoto(${blocoId}, '${photo.id}', this.value)">
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        });
+
+        blocoCounter = Math.max(blocoCounter, rascunho.blocoCounterSnapshot || blocoCounter);
+        isRestoringRascunho = false;
+
+        const banner = document.getElementById('draftBanner');
+        if (banner) banner.style.display = 'flex';
+    }
+
+    function limparRascunho() {
+        if (!confirm('Descartar todo o progresso salvo e começar do zero?')) return;
+        if (storageAvailable) {
+            try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch (e) { /* ignora */ }
+        }
+        location.reload();
     }
 
     function finalizarAuditorias() {
@@ -934,6 +1245,18 @@
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
+
+            // Fotos obrigatórias quando houver qualquer divergência no plano
+            const blocoId = Number(el.dataset.blocoId);
+            const temDivergencia = !!el.querySelector(`input[name="aramadoConforme_${blocoId}"][value="Não"]:checked`)
+                || el.querySelector('.item-divergencia-row') !== null;
+            const temFoto = (blocosState[blocoId] && blocosState[blocoId].fotos.length > 0);
+            if (temDivergencia && !temFoto) {
+                statusMsg.className = 'status-message error';
+                statusMsg.textContent = 'Este plano tem divergência registrada — anexe ao menos uma foto como evidência antes de finalizar.';
+                el.querySelector('.upload-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
         }
 
         statusMsg.style.display = 'none';
@@ -951,7 +1274,8 @@
             const motivoTexto = item.conforme === 'Não' ? (item.motivo || '-') : '-';
             const respTexto = item.conforme === 'Não' ? (item.responsavel || '-') : '-';
             const turnoTexto = item.conforme === 'Não' ? (item.turnoResponsavel || '-') : '-';
-            return `<tr class="${rowClass}"><td>${item.nomeFisico || '-'}</td><td>${item.qtdeFisico || '-'}</td><td>${item.nomeWMS || '-'}</td><td>${item.qtdeWMS || '-'}</td><td><strong>${item.conforme || '-'}</strong></td><td>${motivoTexto}</td><td>${respTexto}</td><td>${turnoTexto}</td></tr>`;
+            const difTexto = (item.diferenca > 0 ? '+' : '') + (item.diferenca || 0);
+            return `<tr class="${rowClass}"><td>${item.nomeFisico || '-'}</td><td>${item.qtdeFisico || '-'}</td><td>${item.nomeWMS || '-'}</td><td>${item.qtdeWMS || '-'}</td><td><strong>${difTexto}</strong></td><td><strong>${item.conforme || '-'}</strong></td><td>${motivoTexto}</td><td>${respTexto}</td><td>${turnoTexto}</td></tr>`;
         }).join('');
 
         return `
@@ -985,7 +1309,7 @@
 
                 <div class="section-title">3. Contagem e Verificação com o WMS</div>
                 <table class="report-table">
-                    <thead><tr><th>Item Físico</th><th>Qtde Físico</th><th>Item WMS</th><th>Qtde WMS</th><th>Conforme?</th><th>Motivo</th><th>Responsável</th><th>Turno Responsável</th></tr></thead>
+                    <thead><tr><th>Item Físico</th><th>Qtde Físico</th><th>Item WMS</th><th>Qtde WMS</th><th>Diferença</th><th>Conforme?</th><th>Motivo</th><th>Responsável</th><th>Turno Responsável</th></tr></thead>
                     <tbody>${itensRows}</tbody>
                 </table>
 
@@ -1154,6 +1478,8 @@
                 .report-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
                 .report-table th, .report-table td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
                 .report-table th { background: #f1f5f9 !important; color: #003865 !important; }
+                .report-table th:nth-child(3), .report-table th:nth-child(4),
+                .report-table td:nth-child(3), .report-table td:nth-child(4) { background: #dbeafe !important; }
                 .row-nao { background: #fef2f2 !important; }
                 .row-sim { background: #f0fdf4 !important; }
                 .status-tag { display: inline-block; padding: 4px 12px; border-radius: 12px; color: #fff !important; font-weight: bold; font-size: 12px; }
@@ -1198,6 +1524,12 @@
         win.document.close();
         setTimeout(() => { win.print(); }, 500);
     }
+
+    // ===== Inicialização: autosave por delegação de evento + restauração do rascunho =====
+    document.getElementById('auditForm').addEventListener('input', salvarRascunhoDebounced);
+    document.getElementById('auditForm').addEventListener('change', salvarRascunho);
+
+    restaurarRascunho();
 </script>
 
 </body>
