@@ -516,7 +516,7 @@
 <script>
     // ===== Estado geral =====
     let blocoCounter = 0;
-    const blocosState = {}; // { [blocoId]: { itemIdCounter, itens: {}, fotos: [], fotoIdCounter } }
+    const blocosState = {}; // { [blocoId]: { itemIdCounter, fotos: [], fotoIdCounter } }
 
     // ===== Fotos (compressão) =====
     const MAX_FOTOS = 15;
@@ -613,12 +613,14 @@
                     </div>
                 </div>
 
-                <div class="section-title" style="margin-top: 20px;">Contagem e Registro de Itens</div>
+                <div class="section-title" style="margin-top: 20px;">Contagem e Verificação com o WMS</div>
                 <table class="itens-table" id="itensTable_${blocoId}">
                     <thead>
                         <tr>
-                            <th>Item</th>
-                            <th style="width:110px;">Quantidade</th>
+                            <th>Item Físico</th>
+                            <th style="width:100px;">Qtde Físico</th>
+                            <th>Item WMS</th>
+                            <th style="width:100px;">Qtde WMS</th>
                             <th style="width:130px;">Conforme?</th>
                             <th></th>
                         </tr>
@@ -717,6 +719,8 @@
         tr.innerHTML = `
             <td><input type="text" class="input-item-nome" placeholder="Ex: Item 4521" required></td>
             <td><input type="number" class="input-item-qtd" min="0" placeholder="0" required></td>
+            <td><input type="text" class="input-item-nome-wms" placeholder="Ex: Item 4521" required></td>
+            <td><input type="number" class="input-item-qtd-wms" min="0" placeholder="0" required></td>
             <td>
                 <select class="select-item-conforme" required>
                     <option value="">Selecione...</option>
@@ -742,7 +746,7 @@
                 trDivergencia.className = 'item-divergencia-row';
                 trDivergencia.dataset.itemId = id;
                 trDivergencia.innerHTML = `
-                    <td colspan="4">
+                    <td colspan="6">
                         <div class="item-divergencia-fields">
                             <div>
                                 <label for="itemMotivo_${blocoId}_${id}">Motivo *</label>
@@ -860,15 +864,17 @@
             const itemId = tr.dataset.itemId;
             const conforme = tr.querySelector('.select-item-conforme').value;
             const item = {
-                nome: tr.querySelector('.input-item-nome').value,
-                quantidade: tr.querySelector('.input-item-qtd').value,
+                nomeFisico: tr.querySelector('.input-item-nome').value,
+                qtdeFisico: tr.querySelector('.input-item-qtd').value,
+                nomeWMS: tr.querySelector('.input-item-nome-wms').value,
+                qtdeWMS: tr.querySelector('.input-item-qtd-wms').value,
                 conforme,
                 motivo: '',
                 responsavel: '',
                 turnoResponsavel: ''
             };
             if (conforme === 'Não') {
-                const trDivergencia = blocoEl.querySelector(`.item-divergencia-row[data-item-id="${itemId}"]`);
+                const trDivergencia = document.querySelector(`#itensTableBody_${blocoId} tr.item-divergencia-row[data-item-id="${itemId}"]`);
                 if (trDivergencia) {
                     item.motivo = trDivergencia.querySelector('.select-item-motivo').value;
                     item.responsavel = trDivergencia.querySelector('.input-item-responsavel').value;
@@ -945,7 +951,7 @@
             const motivoTexto = item.conforme === 'Não' ? (item.motivo || '-') : '-';
             const respTexto = item.conforme === 'Não' ? (item.responsavel || '-') : '-';
             const turnoTexto = item.conforme === 'Não' ? (item.turnoResponsavel || '-') : '-';
-            return `<tr class="${rowClass}"><td>${item.nome || '-'}</td><td>${item.quantidade || '-'}</td><td><strong>${item.conforme || '-'}</strong></td><td>${motivoTexto}</td><td>${respTexto}</td><td>${turnoTexto}</td></tr>`;
+            return `<tr class="${rowClass}"><td>${item.nomeFisico || '-'}</td><td>${item.qtdeFisico || '-'}</td><td>${item.nomeWMS || '-'}</td><td>${item.qtdeWMS || '-'}</td><td><strong>${item.conforme || '-'}</strong></td><td>${motivoTexto}</td><td>${respTexto}</td><td>${turnoTexto}</td></tr>`;
         }).join('');
 
         return `
@@ -977,9 +983,9 @@
                     </div>
                 ` : ''}
 
-                <div class="section-title">3. Contagem e Registro de Itens</div>
+                <div class="section-title">3. Contagem e Verificação com o WMS</div>
                 <table class="report-table">
-                    <thead><tr><th>Item</th><th>Quantidade</th><th>Conforme?</th><th>Motivo</th><th>Responsável</th><th>Turno Responsável</th></tr></thead>
+                    <thead><tr><th>Item Físico</th><th>Qtde Físico</th><th>Item WMS</th><th>Qtde WMS</th><th>Conforme?</th><th>Motivo</th><th>Responsável</th><th>Turno Responsável</th></tr></thead>
                     <tbody>${itensRows}</tbody>
                 </table>
 
