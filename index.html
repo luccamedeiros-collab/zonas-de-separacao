@@ -707,6 +707,9 @@
                                 <option value="Saco/caixa aberto">Saco/caixa aberto</option>
                                 <option value="Saco/caixa avariado">Saco/caixa avariado</option>
                                 <option value="Placa de identificação incorreta">Placa de identificação incorreta</option>
+                                <option value="Etiquetas duplicadas">Etiquetas duplicadas</option>
+                                <option value="Troca de etiquetas">Troca de etiquetas</option>
+                                <option value="Etiqueta ilegível">Etiqueta ilegível</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -878,6 +881,33 @@
         }
         tr.querySelector('.input-item-qtd').addEventListener('input', atualizarDiferenca);
         tr.querySelector('.input-item-qtd-wms').addEventListener('input', atualizarDiferenca);
+
+        // Duplica Item/Quantidade Físico para o WMS automaticamente (agiliza o
+        // preenchimento, já que normalmente os dois batem). Se o usuário editar o
+        // campo do WMS diretamente, ele "trava" e para de ser sobrescrito — assim
+        // dá pra corrigir só o WMS quando houver divergência de verdade.
+        const inputNomeFisico = tr.querySelector('.input-item-nome');
+        const inputQtdFisico = tr.querySelector('.input-item-qtd');
+        const inputNomeWMS = tr.querySelector('.input-item-nome-wms');
+        const inputQtdWMS = tr.querySelector('.input-item-qtd-wms');
+
+        // Como a cópia abaixo só ajusta o .value (sem disparar evento 'input'),
+        // qualquer digitação real do usuário nesses campos é sempre genuína —
+        // basta marcar como manual direto, sem precisar distinguir origem.
+        inputNomeFisico.addEventListener('input', function () {
+            if (!inputNomeWMS.dataset.escolhaManual) {
+                inputNomeWMS.value = this.value;
+            }
+        });
+        inputQtdFisico.addEventListener('input', function () {
+            if (!inputQtdWMS.dataset.escolhaManual) {
+                inputQtdWMS.value = this.value;
+                atualizarDiferenca();
+            }
+        });
+        inputNomeWMS.addEventListener('input', function () { this.dataset.escolhaManual = '1'; });
+        inputQtdWMS.addEventListener('input', function () { this.dataset.escolhaManual = '1'; });
+
         tr.querySelector('.select-item-conforme').addEventListener('change', function () {
             // Se a própria sugestão automática disparou esta mudança, o flag
             // "origemAutomatica" já foi setado antes do dispatch — nesse caso não
@@ -1153,8 +1183,14 @@
 
                 row.querySelector('.input-item-nome').value = itemSalvo.nomeFisico || '';
                 row.querySelector('.input-item-qtd').value = itemSalvo.qtdeFisico || '';
-                row.querySelector('.input-item-nome-wms').value = itemSalvo.nomeWMS || '';
-                row.querySelector('.input-item-qtd-wms').value = itemSalvo.qtdeWMS || '';
+                // Marca como "escolha manual" antes de preencher, pra cópia automática
+                // Físico → WMS não sobrescrever os valores do WMS que já foram salvos.
+                const campoNomeWMS = row.querySelector('.input-item-nome-wms');
+                const campoQtdWMS = row.querySelector('.input-item-qtd-wms');
+                campoNomeWMS.dataset.escolhaManual = '1';
+                campoQtdWMS.dataset.escolhaManual = '1';
+                campoNomeWMS.value = itemSalvo.nomeWMS || '';
+                campoQtdWMS.value = itemSalvo.qtdeWMS || '';
                 row.querySelector('.input-item-qtd').dispatchEvent(new Event('input', { bubbles: true }));
 
                 const selectConforme = row.querySelector('.select-item-conforme');
@@ -1458,7 +1494,7 @@
                     </td>
                 </tr>
             </table>
-            <div class="resumo-page-break"></div>
+            <hr style="border: none; border-top: 2px solid #cbd5e1; margin: 20px 0;">
         `;
 
         const reportHtml = `
@@ -1500,7 +1536,6 @@
                 .turno-table td { padding: 6px 4px; border-bottom: 1px solid #e2e8f0; color: #1e293b !important; }
                 .turno-table td:last-child { text-align: right; color: #003865 !important; }
                 .turno-total { margin-top: 10px; font-size: 12px; font-weight: 700; color: #003865 !important; text-align: right; }
-                .resumo-page-break { page-break-after: always; }
 
                 @media print { .no-print { display: none !important; } body { padding: 0; } }
             </style>
